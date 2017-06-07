@@ -1,0 +1,21 @@
+{
+  "name": "jwkrotatekey",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/srinandan/jwkrotatekey.git"
+  },  
+  "author": "Nandan Sridhar <nandanks@gmail.com>",
+  "license": "Apache 2.0",
+  "dependencies": {
+    "commander": "^2.9.0",
+    "debug": "^2.6.8",
+    "pem": "^1.9.7",
+    "request": "^2.81.0"
+  }
+}
