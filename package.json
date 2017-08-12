@@ -9,12 +9,14 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/srinandan/jwkrotatekey.git"
-  },  
+  },
   "author": "Nandan Sridhar <nandanks@gmail.com>",
-  "license": "Apache 2.0",
+  "license": "Apache",
   "dependencies": {
-    "commander": "^2.9.0",
+    "apigeetool": "^0.7.2-beta.0",
+    "commander": "^2.11.0",
     "debug": "^2.6.8",
+    "microgateway-edgeauth": "^2.3.0-beta",
     "pem": "^1.9.7",
     "request": "^2.81.0"
   }

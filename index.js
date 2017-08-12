@@ -15,6 +15,7 @@ commander
     .option('-u, --username <user>', 'username of the organization admin')
     .option('-p, --password <password>', 'password of the organization admin')
     .option('-k, --kid <kid>','kid for the private/public key')
+    .option('-b, --baseuri <baseuri>', 'baseuri for management apis')    
     .parse(process.argv);
 
 if (!commander.username || !commander.password || !commander.org || !commander.env) {
@@ -26,7 +27,7 @@ options.org = commander.org;
 options.env = commander.env;
 options.username = commander.username;
 options.password = commander.password;
-options.baseuri = "https://api.enterprise.apigee.com";
+options.baseuri = commander.baseuri || "https://api.enterprise.apigee.com";
 options.kvm = "microgateway";
 options.kid =  commander.kid || "2";
 options.proto = "https";
