@@ -15,6 +15,8 @@ commander
     .option('-u, --username <user>', 'username of the organization admin')
     .option('-p, --password <password>', 'password of the organization admin')
     .option('-k, --kid <kid>','kid for the private/public key')
+		.option('-m, --mgmtdomain <https://url:port>', 'on-premise domain and port for the management server')
+		.option('-r, --runtimedomain <https://domain:port>', 'on-premise domain and port to access the proxies')
     .parse(process.argv);
 
 if (!commander.username || !commander.password || !commander.org || !commander.env) {
@@ -22,14 +24,26 @@ if (!commander.username || !commander.password || !commander.org || !commander.e
 	process.exit(1);
 }
 
+if(commander.mgmtdomain && !commander.runtimedomain) {
+	console.error("Apigee Edge managment server domain was provided but the runtime domain was not provided.");
+	process.exit(1);
+}
+
+if(!commander.runtimedomain && commander.mgmtdomain) {
+	console.error("Apigee Edge runtime domain was provided but the mangement server domain was not provided.");
+	process.exit(1);
+}
+
 options.org = commander.org;
 options.env = commander.env;
 options.username = commander.username;
 options.password = commander.password;
-options.baseuri = "https://api.enterprise.apigee.com";
+options.baseuri = commander.mgmtdomain || "https://api.enterprise.apigee.com";
 options.kvm = "microgateway";
 options.kid =  commander.kid || "2";
 options.proto = "https";
+options.mgmtdomain = commander.mgmtdomain;
+options.runtimedomain = commander.runtimedomain;
 
 // response: { certificate, csr, clientKey, serviceKey }
 function createCert(cb) {
@@ -55,9 +69,22 @@ function generateCredentialsObject(options) {
     }
 }
 
+function getPublicKeyURI(options) {
+	if(options.runtimedomain){
+		console.log("public key uri: " + util.format("%s/edgemicro-auth/publicKey",options.runtimedomain));
+		return util.format("%s/edgemicro-auth/publicKey",options.runtimedomain);
+	} else {
+		console.log("public key uri: " + util.format("%s://%s-%s.apigee.net/edgemicro-auth/publicKey",
+				options.proto, options.org, options.env));
+		return util.format("%s://%s-%s.apigee.net/edgemicro-auth/publicKey",
+					options.proto, options.org, options.env);
+	}
+}
 
 var privateKeyURI = util.format("%s/v1/organizations/%s/environments/%s/keyvaluemaps/%s/entries/private_key",
-    options.baseuri, options.org, options.env, options.kvm);
+		options.baseuri, options.org, options.env, options.kvm);
+var publicKeyURI = getPublicKeyURI(options);
+
 console.log("Checking if private key in the KVM...");
 request({
     uri: privateKeyURI,
@@ -68,10 +95,8 @@ request({
         console.error(err);
     } else {
     	console.log("Private key found");
-        var publicKeyURI = util.format("%s://%s-%s.apigee.net/edgemicro-auth/publicKey",
-            options.proto, options.org, options.env);
-        console.log("Checking for public key...");
-        request({
+      console.log("Checking for public key...");
+      request({
             uri: publicKeyURI,
             auth: generateCredentialsObject(options),
             method: "GET"
@@ -85,8 +110,10 @@ request({
             		console.log(oldPublicKey.publicKey);
             		console.log("Generating New key/cert pair...");
             		createCert(function(err, newkeys) {
+
             		    var updatekvmuri = util.format("%s/v1/organizations/%s/environments/%s/keyvaluemaps/%s",
             		        options.baseuri, options.org, options.env, options.kvm);
+										console.log("update kvm uri: " + updatekvmuri);
             		    console.log("New Private Key");
             		    console.log(newkeys.serviceKey);
             		    console.log("New Public Key");
