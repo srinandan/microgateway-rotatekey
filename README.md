@@ -15,9 +15,23 @@ cd jwkrotatekey
 npm install .
 ```
 
-## Usage
+## Upgrade edgemicro-auth proxy
+If you had configured microgateway prior to 2.5.2, then run this command to upgrade the `edgemicro-auth` proxy
+to the latest version.
 ```
-node index.js -o <org name> -e <env> -u <username> -p <password>
+node upgrade-edgeauth.js -o <org-name> -e <env> -u <username> -p <password>
+```
+
+## Upgrade KVM
+If you had configured microgateway prior to 2.5.2, then run this command to upgrade the `microgateway` KVM
+```
+node upgrade-kvm.js -o <org-name> -e <env> -u <username> -p <password>
+```
+
+## Rotate JWT
+This command will generate a new key/cert pair
+```
+node rotate-key.js -o <org name> -e <env> -u <username> -p <password>
 ```
 
 ## Initial Setup

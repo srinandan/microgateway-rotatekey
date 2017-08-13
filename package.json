@@ -2,7 +2,7 @@
   "name": "jwkrotatekey",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "rotate-key.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -11,7 +11,7 @@
     "url": "git+https://github.com/srinandan/jwkrotatekey.git"
   },
   "author": "Nandan Sridhar <nandanks@gmail.com>",
-  "license": "Apache",
+  "license": "Apache-2.0",
   "dependencies": {
     "apigeetool": "^0.7.2-beta.0",
     "commander": "^2.11.0",
